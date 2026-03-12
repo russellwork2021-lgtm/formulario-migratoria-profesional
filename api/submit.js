@@ -41,6 +41,48 @@ export default async function handler(req, res) {
     );
     const fullWhatsappUrl = `${whatsappLink}?text=${whatsappMessage}`;
 
+    // Diccionarios de traducción (Mapeo de values a labels en español)
+    const entryMethodsMap = {
+      'visa': 'Entré con Visa (Turista, Trabajo, Estudiante)',
+      'border': 'Entré por la frontera sin inspección',
+      'detained': 'Fui detenido/a y liberado/a con fecha de corte',
+      'tps': 'Tengo TPS (Estatus de Protección Temporal)',
+      'asylum': 'Solicité asilo al llegar'
+    };
+
+    const alienNumberMap = {
+      'yes': 'Sí, tengo mi A-Number',
+      'no': 'No tengo A-Number',
+      'unsure': 'No estoy seguro / Necesito ayuda'
+    };
+
+    const workingMap = {
+      'yes-permit': 'Sí, con permiso de trabajo',
+      'yes-no-permit': 'Sí, sin permiso de trabajo',
+      'no': 'No estoy trabajando actualmente'
+    };
+
+    const urgencyMap = {
+      'emergency': 'URGENTE - Orden de deportación/fecha límite',
+      'high': 'Alta prioridad - Necesito resolver pronto',
+      'medium': 'Moderada - Quiero planificar mi caso',
+      'informative': 'Informativa - Quiero conocer opciones'
+    };
+
+    const financialMap = {
+      'prepared': 'Tengo recursos disponibles',
+      'payment-plan': 'Necesitaría un plan de pagos',
+      'limited': 'Recursos limitados - necesito opciones económicas'
+    };
+
+    // Traducir los valores recibidos
+    const translatedEntryMethod = entryMethodsMap[data.entryMethod] || data.entryMethod;
+    const translatedAlienNumber = alienNumberMap[data.hasAlienNumber] || data.hasAlienNumber;
+    const translatedWorking = workingMap[data.currentlyWorking] || data.currentlyWorking;
+    const translatedUrgency = urgencyMap[data.urgencyLevel] || data.urgencyLevel;
+    const translatedFinancial = financialMap[data.financialResources] || data.financialResources;
+    const entryYearDisplay = data.entryYear === 'before' ? 'Antes del 2000' : data.entryYear;
+
     // Mensaje formateado para Telegram (HTML)
     const message = `
 🏛 <b>NUEVA SOLICITUD DE EVALUACIÓN</b>
@@ -51,13 +93,13 @@ export default async function handler(req, res) {
 📍 <b>Estado:</b> ${data.state}
 
 ⚖️ <b>SITUACIÓN MIGRATORIA:</b>
-• <b>Entrada:</b> ${data.entryMethod}
-• <b>Año:</b> ${data.entryYear}
-• <b>A-Number:</b> ${data.hasAlienNumber}
-• <b>Trabajo:</b> ${data.currentlyWorking}
+• <b>Entrada:</b> ${translatedEntryMethod}
+• <b>Año:</b> ${entryYearDisplay}
+• <b>A-Number:</b> ${translatedAlienNumber}
+• <b>Trabajo:</b> ${translatedWorking}
 
-🚨 <b>URGENCIA:</b> ${data.urgencyLevel}
-💰 <b>RECURSOS:</b> ${data.financialResources}
+🚨 <b>URGENCIA:</b> ${translatedUrgency}
+💰 <b>RECURSOS:</b> ${translatedFinancial}
 
 📝 <b>DETALLES DEL CASO:</b>
 <i>"${data.urgencyDescription}"</i>
