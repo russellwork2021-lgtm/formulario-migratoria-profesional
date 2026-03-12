@@ -225,12 +225,32 @@ export default function App() {
     }
   }
 
-  const onSubmit = async () => {
+  const onSubmit = async (data: FormData) => {
     setIsSubmitting(true)
-    await new Promise(r => setTimeout(r, 2000))
-    setIsSubmitting(false)
-    setShowSuccess(true)
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    
+    try {
+      // Llamada al endpoint de Vercel (nuestra API oculta)
+      const res = await fetch('/api/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      if (!res.ok) {
+        throw new Error('Error de conexión con el servidor')
+      }
+
+      // 2. Si es exitoso, mostrar pantalla de éxito
+      setShowSuccess(true)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } catch (error) {
+      console.error('Error enviando formulario:', error)
+      alert('Hubo un error al enviar su solicitud. Por favor, intente nuevamente.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const handleReset = () => {
