@@ -238,16 +238,24 @@ export default function App() {
         body: JSON.stringify(data),
       })
 
-      if (!res.ok) {
-        throw new Error('Error de conexión con el servidor')
+      let result
+      try {
+        result = await res.json()
+      } catch (e) {
+        console.error('No se pudo parsear el JSON de Vercel', e)
+        throw new Error('El servidor no devolvió una respuesta válida.')
       }
 
-      // 2. Si es exitoso, mostrar pantalla de éxito
+      if (!res.ok) {
+        throw new Error(result.error || 'Error de conexión con el servidor')
+      }
+
+      // Si es exitoso, mostrar pantalla de éxito
       setShowSuccess(true)
       window.scrollTo({ top: 0, behavior: 'smooth' })
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error enviando formulario:', error)
-      alert('Hubo un error al enviar su solicitud. Por favor, intente nuevamente.')
+      alert(`Hubo un error al enviar su solicitud: ${error.message}. Por favor, intente nuevamente.`)
     } finally {
       setIsSubmitting(false)
     }
