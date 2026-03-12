@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     
     // Mensaje pre-escrito WhatsApp
     const whatsappMessage = encodeURIComponent(
-      `Estimado/a ${data.fullName}, gracias por contactar al bufete de Martinez & Asociados. Hemos evaluado preliminarmente su solicitud y nos complace informarle que su perfil califica para una revisión prioritaria. ¿En qué horario le gustaría agendar su llamada gratuita con nuestro especialista legal?`
+      `Estimado/a ${data.fullName}, le contactamos del Centro Nacional de Defensa Migratoria 🏛️.\n\nRevisamos su evaluación y ¡tenemos buenas noticias! Su perfil fue aprobado para una consulta gratuita con nuestros especialistas. ✅\n\nPara no hacerle perder tiempo y explicarle sus opciones reales, el siguiente paso es una breve llamada confidencial. ¿A qué hora le viene mejor que le marquemos el día de hoy? 📞`
     );
     const fullWhatsappUrl = `${whatsappLink}?text=${whatsappMessage}`;
 
